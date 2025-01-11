@@ -44,9 +44,9 @@ CLANG_TRIPLE=aarch64-linux-gnu- \
 build_kernel(){
     cd "${RDIR}"
     make ${ARGS} clean && make ${ARGS} mrproper
-    make ${ARGS} redbull_defconfig
+    make ${ARGS} redbull_defconfig custom.config
     make ${ARGS} menuconfig
-    make ${ARGS} || exit 1
+    make ${ARGS}|| exit 1
     cp out/arch/arm64/boot/Image.gz $(pwd)/arch/arm64/boot/Image.gz
     cp out/arch/arm64/boot/Image $(pwd)/arch/arm64/boot/Image
 }
