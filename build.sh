@@ -51,8 +51,7 @@ build_kernel(){
     make ${ARGS} redbull_defconfig custom.config
     make ${ARGS} menuconfig
     make ${ARGS}|| exit 1
-    cp out/arch/arm64/boot/Image.gz $(pwd)/arch/arm64/boot/Image.gz
-    cp out/arch/arm64/boot/Image $(pwd)/arch/arm64/boot/Image
+    cp ${RDIR}/out/arch/arm64/boot/Image* ${RDIR}/build
 }
 
 build_kernel
