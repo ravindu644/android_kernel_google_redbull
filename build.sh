@@ -1,0 +1,54 @@
+#!/bin/bash
+export ARCH=arm64
+export RDIR="$(pwd)"
+export KBUILD_BUILD_USER="@ravindu644"
+
+#init neutron-clang
+if [ ! -d "${RDIR}/toolchains/neutron-clang" ]; then
+    echo -e "\n[INFO] Cloning Neutron-Clang Toolchain\n"
+    mkdir -p "${RDIR}/toolchains/neutron-clang"
+    cd "${RDIR}/toolchains/neutron-clang"
+    curl -LO "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman" && chmod +x antman
+    bash antman -S && bash antman --patch=glibc
+    cd "${RDIR}"
+fi
+
+#export toolchain paths
+export BUILD_CROSS_COMPILE="${RDIR}/toolchains/gcc/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-"
+export BUILD_CC="${RDIR}/toolchains/neutron-clang/bin/clang"
+
+#output dir
+if [ ! -d "${RDIR}/out" ]; then
+    mkdir -p "${RDIR}/out"
+fi
+
+#build dir
+if [ ! -d "${RDIR}/build" ]; then
+    mkdir -p "${RDIR}/build"
+else
+    rm -rf "${RDIR}/build" && mkdir -p "${RDIR}/build"
+fi
+
+#build options
+export ARGS="
+-C $(pwd) \
+O=$(pwd)/out \
+-j$(nproc) \
+ARCH=arm64 \
+CROSS_COMPILE=${BUILD_CROSS_COMPILE} \
+CC=${BUILD_CC} \
+CLANG_TRIPLE=aarch64-linux-gnu- \
+"
+
+#build kernel image
+build_kernel(){
+    cd "${RDIR}"
+    make ${ARGS} clean && make ${ARGS} mrproper
+    make ${ARGS} redbull_defconfig
+    make ${ARGS} menuconfig
+    make ${ARGS} || exit 1
+    cp out/arch/arm64/boot/Image.gz $(pwd)/arch/arm64/boot/Image.gz
+    cp out/arch/arm64/boot/Image $(pwd)/arch/arm64/boot/Image
+}
+
+build_kernel
