@@ -1,4 +1,8 @@
 #!/bin/bash
+
+#init ksu next
+git submodule init && git submodule update
+
 export ARCH=arm64
 export RDIR="$(pwd)"
 export KBUILD_BUILD_USER="@ravindu644"
