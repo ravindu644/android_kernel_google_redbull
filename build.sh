@@ -4,7 +4,7 @@ export RDIR="$(pwd)"
 export KBUILD_BUILD_USER="@ravindu644"
 
 #install requirements
-sudo apt install libarchive-tools zstd -y
+sudo apt install libarchive-tools zstd lz4 wget -y
 
 #init neutron-clang
 if [ ! -d "${RDIR}/toolchains/neutron-clang" ]; then
